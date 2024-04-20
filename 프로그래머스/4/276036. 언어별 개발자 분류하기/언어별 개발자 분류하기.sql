@@ -1,0 +1,30 @@
+WITH PYTHON AS 
+    (
+        SELECT S.CODE AS CC
+        FROM SKILLCODES S
+        WHERE S.NAME = "Python"
+    )
+    , C AS 
+    (
+        SELECT S.CODE AS CC
+        FROM SKILLCODES S 
+        WHERE S.NAME = "C#"
+    )
+    , FRONT AS
+    (
+        SELECT SUM(S.CODE) AS CC
+        FROM SKILLCODES S
+        WHERE S.CATEGORY = "Front End"
+    )
+
+SELECT 
+    CASE 
+        WHEN SKILL_CODE & (SELECT CC FROM PYTHON) AND
+             SKILL_CODE & (SELECT CC FROM FRONT) THEN "A"
+        WHEN SKILL_CODE & (SELECT CC FROM C) THEN "B"
+        WHEN SKILL_CODE & (SELECT CC FROM FRONT) THEN "C"
+    END GRADE
+    , ID, EMAIL
+FROM DEVELOPERS
+HAVING GRADE IS NOT NULL
+ORDER BY GRADE, ID
