@@ -1,32 +1,30 @@
-def count_routers(houses, distance):
-    routers = 1
-    cur_house = houses[0]
-    
-    for house in houses:
-        if house - cur_house >= distance:
-            routers += 1
-            cur_house = house
-            
-    return routers
+import math,sys
+input = sys.stdin.readline
 
-def max_router_distance(houses, c):
-    houses.sort()
-    start = 1
-    end = houses[-1] - houses[0]
-    result = 0
-    
-    while start <= end:
-        mid = (start + end) // 2
-        if count_routers(houses, mid) >= c:
+n,c = map(int,input().split())
+h = [int(input()) for i in range(n)]
+h.sort()
+start,end = 1, h[n-1] - h[0]
+# 집 사이의 최소 거리, 최대 거리
+result = 0
+
+if c == 2:
+    print(h[n-1] - h[0])
+    # 집이 2개라면 무조건 처음, 마지막 집 사이의 거리
+else:
+    while(start < end):
+        mid = (start + end)//2
+
+        count = 1
+        ts = h[0]
+        # 마지막으로 설치된 공유기의 위치
+        for i in range(n):
+            if h[i] - ts >= mid:
+                count+=1
+                ts = h[i]
+        if count >= c:
             result = mid
             start = mid + 1
-        else:
-            end = mid - 1
-    
-    return result
-
-
-N, C = map(int, input().split())
-houses = [int(input()) for _ in range(N)]
-
-print(max_router_distance(houses, C))
+        elif count < c:
+            end = mid
+    print(result)
