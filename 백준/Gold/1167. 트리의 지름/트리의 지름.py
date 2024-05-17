@@ -1,47 +1,37 @@
-from collections import defaultdict
+from collections import deque
 
-def find_farthest_node(tree, start):
+def bfs(tree, start):
+    queue = deque([(start, 0)])
     visited = set()
-    stack = [(start, 0)]  
-    farthest_node = start
     max_distance = 0
+    max_node = start
 
-    while stack:
-        node, distance = stack.pop()
+    while queue:
+        node, dis = queue.popleft()
         visited.add(node)
-
-        if distance > max_distance:
-            max_distance = distance
-            farthest_node = node
-
+        
+        if dis > max_distance:
+            max_distance = dis
+            max_node = node
+        
         for neighbor, weight in tree[node]:
             if neighbor not in visited:
-                stack.append((neighbor, distance + weight))
+                queue.append((neighbor, dis + weight))
+                
+    return max_node, max_distance
 
-    return farthest_node, max_distance
-
-def tree_diameter(tree):
-
-    node1, _ = find_farthest_node(tree, 1)
-
-    _, diameter = find_farthest_node(tree, node1)
-    return diameter
-
-def main():
-
-    V = int(input())
-    tree = defaultdict(list)
+V = int(input())
+tree = [[] for _ in range(V + 1)]
 
 
-    for _ in range(V):
-        info = list(map(int, input().split()))
-        node = info[0]
-        edges = info[1:-1]
-        for i in range(0, len(edges), 2):
-            neighbor, weight = edges[i], edges[i+1]
-            tree[node].append((neighbor, weight))
+for _ in range(V):
+    info = list(map(int, input().split()))
+    node = info[0]
+    edges = info[1:-1]
+    for i in range(0, len(edges), 2):
+        neighbor, weight = edges[i], edges[i+1]
+        tree[node].append((neighbor, weight))
 
-    print(tree_diameter(tree))
-
-if __name__ == "__main__":
-    main()
+x, _ = bfs(tree, 1)
+x1, y1 = bfs(tree, x)
+print(y1)
